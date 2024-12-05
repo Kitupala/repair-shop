@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { TextareaHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
 
 type Props<S> = {
   fieldTitle: string;
@@ -39,7 +40,10 @@ export function TextAreaWithLabel<S>({
           <FormControl>
             <Textarea
               id={nameInSchema}
-              className={className}
+              className={cn(
+                "disabled:text-blue-700 disabled:opacity-75 dark:disabled:text-yellow-500",
+                className,
+              )}
               {...props}
               {...field}
             />
