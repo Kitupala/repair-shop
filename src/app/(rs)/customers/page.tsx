@@ -1,6 +1,5 @@
 import CustomerSearch from "@/app/(rs)/customers/CustomerSearch";
 import { getCustomerSearchResults } from "@/lib/queries/getCustomerSearchResults";
-import { db } from "@/db";
 
 export const metadata = {
   title: "Customer Search",
