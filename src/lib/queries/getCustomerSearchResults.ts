@@ -3,7 +3,7 @@ import { customers } from "@/db/schema";
 import { ilike, or, sql } from "drizzle-orm";
 
 export async function getCustomerSearchResults(searchText: string) {
-  const results = await db
+  return db
     .select()
     .from(customers)
     .where(
@@ -15,6 +15,4 @@ export async function getCustomerSearchResults(searchText: string) {
         sql`lower(concat(${customers.firstName}, ' ', ${customers.lastName})) LIKE ${`%${searchText.toLowerCase().replace(" ", "%")}%`}`,
       ),
     );
-
-  return results;
 }
