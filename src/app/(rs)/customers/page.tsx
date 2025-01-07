@@ -25,7 +25,11 @@ async function Customers({ searchParams }: Props) {
   return (
     <>
       <CustomerSearch />
-      <CustomerTable data={results} />
+      {results.length ? (
+        <CustomerTable data={results} />
+      ) : (
+        <p className="mt-4">No customers found</p>
+      )}
     </>
   );
 }
