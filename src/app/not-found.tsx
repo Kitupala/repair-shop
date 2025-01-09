@@ -21,7 +21,9 @@ export default function NotFound() {
         sizes="400px"
       />
 
-      <Link href="/">Return Home</Link>
+      <Link href="/tickets" className="text-center hover:underline">
+        <h3>Go Home</h3>
+      </Link>
     </div>
   );
 }
