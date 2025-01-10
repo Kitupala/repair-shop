@@ -10,6 +10,7 @@ const TicketSearch = () => {
         type="text"
         placeholder="Search ticket"
         className="w-full"
+        autoFocus
       />
       <SearchButton />
     </Form>

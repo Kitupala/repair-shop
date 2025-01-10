@@ -10,6 +10,7 @@ const CustomerSearch = () => {
         type="text"
         placeholder="Search customer"
         className="w-full"
+        autoFocus
       />
       <SearchButton />
     </Form>
