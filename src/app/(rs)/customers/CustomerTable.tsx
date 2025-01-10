@@ -1,9 +1,10 @@
 "use client";
 
 import { selectCustomerSchemaType } from "@/zod-schemas/customer";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import {
+  CellContext,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -18,6 +19,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Button } from "@/components/ui/button";
+
+import { MoreHorizontal, TableOfContents } from "lucide-react";
 
 type Props = {
   data: selectCustomerSchemaType[];
@@ -43,7 +57,6 @@ const columnDisplayNames: Record<ColumnNames, string> = {
 };
 
 function CustomerTable({ data }: Props) {
-  const router = useRouter();
   const columnHeadersArray: Array<keyof selectCustomerSchemaType> = [
     "firstName",
     "lastName",
@@ -53,14 +66,62 @@ function CustomerTable({ data }: Props) {
     "zip",
   ];
   const columnHelper = createColumnHelper<selectCustomerSchemaType>();
-  const columns = columnHeadersArray.map((columnName) => {
-    return columnHelper.accessor(columnName, {
-      id: columnName,
-      header:
-        columnDisplayNames[columnName as keyof typeof columnDisplayNames] ||
-        columnName,
-    });
-  });
+
+  const ActionsCell = ({
+    row,
+  }: CellContext<selectCustomerSchemaType, unknown>) => {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center">
+          <DropdownMenuLabel className="mb-2 text-foreground/50">
+            Actions
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="mb-1" />
+          <DropdownMenuItem>
+            <Link
+              href={`/tickets/form?customerId=${row.original.id}`}
+              className="w-full"
+              prefetch={false}
+            >
+              New Ticket
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link
+              href={`/customers/form?customerId=${row.original.id}`}
+              className="w-full"
+              prefetch={false}
+            >
+              Edit Customer
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+  ActionsCell.displayName = "ActionsCell";
+
+  const columns = [
+    columnHelper.display({
+      id: "actions",
+      header: () => <TableOfContents />,
+      cell: ActionsCell,
+    }),
+    ...columnHeadersArray.map((columnName) => {
+      return columnHelper.accessor(columnName, {
+        id: columnName,
+        header:
+          columnDisplayNames[columnName as keyof typeof columnDisplayNames] ||
+          columnName,
+      });
+    }),
+  ];
 
   const table = useReactTable({
     data,
@@ -76,13 +137,24 @@ function CustomerTable({ data }: Props) {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                  <TableHead
+                    key={header.id}
+                    className={header.id === "actions" ? "w-12" : ""}
+                  >
+                    <div
+                      className={
+                        header.id === "actions"
+                          ? "flex items-center justify-center"
+                          : ""
+                      }
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </div>
                   </TableHead>
                 );
               })}
@@ -96,9 +168,6 @@ function CustomerTable({ data }: Props) {
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 className="cursor-pointer hover:bg-border/25"
-                onClick={() =>
-                  router.push(`/customers/form?customerId=${row.original.id}`)
-                }
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
