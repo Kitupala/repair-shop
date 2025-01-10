@@ -107,8 +107,8 @@ export default async function TicketFormPage({ searchParams }: Props) {
         const { users } = await Users.getUsers();
         const techs = users
           ? users.map((user) => ({
-              id: user.email!,
-              description: user.email!,
+              id: user.email!.toLowerCase(),
+              description: user.email!.toLowerCase(),
             }))
           : [];
         return (
